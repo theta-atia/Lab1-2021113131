@@ -52,7 +52,7 @@ public class DirectedGraphApp {
         scanner.close();
     }
     //创建图
-    private static void buildGraph(String filePath) throws FileNotFoundException {
+    public static void buildGraph(String filePath) throws FileNotFoundException {
         Scanner fileScanner = new Scanner(new File(filePath));
         String previousWord = null;
         //遍历所有单词
@@ -66,6 +66,8 @@ public class DirectedGraphApp {
                 }
                 previousWord = currentWord;
             }
+            graph.putIfAbsent(previousWord, new HashMap<>());//没有变则添加边
+            graph.get(previousWord).merge(currentWord, 1, Integer::sum);//有这条边，增加权重
         }
         fileScanner.close();
     }
@@ -173,7 +175,7 @@ public class DirectedGraphApp {
             path.add(at);
         }
         Collections.reverse(path);
-        return "Shortest path (" + distances.get(word2) + "): " + String.join(" -> ", path);
+        return "Shortest path (" + (distances.get(word2))+ "): " + String.join(" -> ", path);
     }
 
     //随机游走
@@ -238,5 +240,8 @@ public class DirectedGraphApp {
             e.printStackTrace();
             System.out.println("写入失败");
         }
+    }
+    public static void clearGraph() {
+        graph.clear();
     }
 }
